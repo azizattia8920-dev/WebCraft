@@ -34,22 +34,23 @@ document.getElementById('contactForm').addEventListener('submit', async function
 });
 
 // Zoom call scheduling
-async function scheduleZoomCall() {
-    const zoomData = {
-        type: 'zoom_request',
-        timestamp: new Date().toISOString(),
-        status: 'requested'
-    };
+window.scheduleZoomCall = function() {
+    // Open Google Calendar Appointment Slots directly
+    const appointmentUrl = 'https://calendar.app.google/8ZHwFBvrMjCY1zkq8';
     
+    // Open in new tab
+    window.open(appointmentUrl, '_blank');
+    
+    // Log the interaction for analytics
     try {
-        // Send zoom request to Convex
-        const zoomRequestId = await convex.mutation(api.contacts.submitZoomRequest, zoomData);
-        console.log('Zoom request submitted successfully with ID:', zoomRequestId);
-        
-        showSuccessMessage('Zoom call request received! We\'ll send you a calendar invite within a few hours.');
+        const zoomData = {
+            type: 'zoom_request',
+            timestamp: new Date().toISOString(),
+            status: 'appointment_slots_opened'
+        };
+        convex.mutation(api.contacts.submitZoomRequest, zoomData);
     } catch (error) {
-        console.error('Error scheduling Zoom call:', error);
-        showErrorMessage('Unable to schedule call right now. Please use the contact form instead.');
+        console.log('Analytics logging failed:', error);
     }
 }
 
